@@ -1,5 +1,6 @@
 # triq
-Hackery to use trio async framework with PyQt
+Hackery to use [trio](https://github.com/python-trio/trio) async framework
+with PyQt/PySide
 
 ## Use at your own risk
 The way this code uses Qt is explicitly discouraged by Qt developers.
@@ -28,3 +29,14 @@ bye.show()
 
 triq.run(app)
 ```
+
+## Gotcha
+
+1. Application won't automatically exit on last window close. You need to keep track
+   of opened windows yourself and call `triq.exit()` when last window is closed. Here
+   is one possible solution:
+    ```python
+    if all(w.isHidden() for w in app.topLevelWidgets() if w.isWindow()):
+        triq.exit()
+    ```
+2. Signal `QApplication.aboutToQuit` is never emitted.
