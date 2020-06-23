@@ -47,7 +47,6 @@ def run(app):
     async def _main():
         with trio.CancelScope() as cancel_scope:
             app.lastWindowClosed.connect(cancel_scope.cancel)
-            app.lastWindowClosed.connect(lambda: print('LastWindowClosed'))
             async for x in _receive_channel:
                 if x is _EXIT:
                     break
