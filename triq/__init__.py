@@ -1,4 +1,4 @@
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 __description__ = 'Use trio async framework with PySide2/PyQt5'
 __url__ = "https://github.com/innodatalabs/triq/"
 __author__ = 'Mike Kroutikov'

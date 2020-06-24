@@ -40,23 +40,30 @@ def exit():
 def call_async(fn, *av):
     _send_channel.send_nowait( (fn, av) )
 
+def default_exception_handler(err):
+    traceback.print_exception(type(err), err, err.__traceback__)
 
 def run(app):
     _reenter = Reenter()
 
+    async def run_task(fn, *av):
+        try:
+            await fn(*av)
+        except Exception as err:
+            raise err
+            _exception_handler(err)
+
     async def _main():
-        with trio.CancelScope() as cancel_scope:
-            app.lastWindowClosed.connect(cancel_scope.cancel)
+        async with trio.open_nursery() as nursery:
+            app.lastWindowClosed.connect(nursery.cancel_scope.cancel)
             async for x in _receive_channel:
                 if x is _EXIT:
                     break
-                try:
-                    fn, av = x
-                    await fn(*av)
-                except Exception as err:
-                    traceback.print_exception(type(err), err, err.__traceback__)
+                fn, av = x
+                nursery.start_soon(run_task, fn, *av)
 
     def _done(trio_main_outcome):
+        trio_main_outcome.unwrap()
         app.quit()
 
     def _schedule(callable_):
