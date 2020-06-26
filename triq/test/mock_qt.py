@@ -38,18 +38,18 @@ class MockApp:
     lastWindowClosed = mock.Mock()
 
 
-class MockEvent:
-    Type = lambda x: None
-    registerEventType = lambda: 1
+class MockReenterEvent:
+    def __init__(self, fn):
+        self._fn = fn
 
-class MockObject:
-    ...
+    def consume(self):
+        self._fn()
+        return False
 
-import sys
+class MockReenter:
+    def event(self, event):
+        return event.consume()
 
-sys.modules['PyQt5'] = mock.Mock(
-    QtCore=mock.Mock(
-        QObject=MockObject,
-        QEvent=MockEvent,
-    )
-)
+    @classmethod
+    def createEvent(cls, fn):
+        return MockReenterEvent(fn)

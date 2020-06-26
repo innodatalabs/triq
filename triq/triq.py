@@ -5,26 +5,6 @@ https://github.com/altendky/alqtendpy/pull/19/files
 '''
 import trio
 import traceback
-try:
-    from PyQt5.QtCore import QEvent, QObject
-except ImportError:
-    from PySide2.QtCore import QEvent, QObject
-
-
-class ReenterEvent(QEvent):
-    REENTER_EVENT = QEvent.Type(QEvent.registerEventType())
-
-    def __init__(self, fn):
-        self._fn = fn
-        super().__init__(self.REENTER_EVENT)
-
-    def consume(self):
-        self._fn()
-        return False
-
-class Reenter(QObject):
-    def event(self, event):
-        return event.consume()
 
 
 _MAX_CONCURRENT_TASKS = 100
@@ -43,8 +23,11 @@ def call_async(fn, *av):
 def default_exception_handler(err):
     traceback.print_exception(type(err), err, err.__traceback__)
 
-def run(app):
-    _reenter = Reenter()
+def run(app, reenter=None):
+    if reenter is None:
+        from .qt import Reenter
+        reenter = Reenter()
+    _reenter = reenter
 
     async def run_task(fn, *av):
         try:
@@ -67,7 +50,7 @@ def run(app):
         app.quit()
 
     def _schedule(callable_):
-        app.postEvent(_reenter, ReenterEvent(callable_))
+        app.postEvent(_reenter, _reenter.createEvent(callable_))
 
     trio.lowlevel.start_guest_run(
         _main,
