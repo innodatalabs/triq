@@ -1,3 +1,6 @@
+'''
+Demonstrates how to run asynchronous jobs from Qt application.
+'''
 import triq
 import trio
 try:
