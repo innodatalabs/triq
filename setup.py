@@ -14,11 +14,15 @@ NAME = 'triq'
 with open('requirements.txt') as f:
     install_requires = f.readlines()
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
     name=NAME,
     version=__version__,
     description=__description__,
-    long_description='See ' + __url__,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url=__url__,
     author=__author__,
     author_email=__author_email__,
@@ -26,7 +30,7 @@ setup(
 
     license='MIT',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

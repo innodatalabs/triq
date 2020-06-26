@@ -1,15 +1,9 @@
-# triq
-Use [trio](https://github.com/python-trio/trio) async framework
-with PyQt5/PySide2
-
-## Caution
-This is an alpha-quality software.
-
-## How to
-```python
-...
 import triq
 import trio
+try:
+    from PyQt5.QtWidgets import QApplication, QPushButton
+except:
+    from PySide2.QtWidgets import QApplication, QPushButton
 
 async def some_async_func(message):
     await trio.sleep(0.5)
@@ -26,6 +20,3 @@ bye.clicked.connect(triq.exit)
 bye.show()
 
 triq.run(app)
-```
-
-The above should work in PyQt5 and PySide2
