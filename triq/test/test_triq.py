@@ -1,7 +1,7 @@
 import trio
 import time
 import pytest
-from triq.test.mock_qt import MockApp
+from triq.test.mock_qt import MockApp, MockReenter
 import triq
 
 
@@ -17,7 +17,7 @@ def test_parallel_execution():
     triq.call_async(worker)
     triq.call_async(worker)
     triq.exit()
-    triq.run(app)
+    triq.run(app, reenter=MockReenter())
 
     assert len(report_work_done_here) == 2
     assert abs(report_work_done_here[0] - report_work_done_here[1]) < 1.0
@@ -45,4 +45,4 @@ def test_two_separate_tasks():
     triq.call_async(task3)
     triq.call_async(task2)
     triq.exit()
-    triq.run(app)
+    triq.run(app, reenter=MockReenter())

@@ -6,7 +6,7 @@ ON_TAG := $(shell git tag --points-at HEAD)
 
 test:
 	pip install pytest
-	PYTHONPATH=. pytest
+	PYTHONPATH=. pytest -s
 
 wheel: test
 	rm -rf build dist
